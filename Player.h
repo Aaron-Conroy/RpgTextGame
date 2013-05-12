@@ -1,37 +1,43 @@
 	#ifndef PLAYER_H
 	#define PLAYER_H
 
-
+	#include<fstream>
+	#include<ostream>
 	#include <iostream>
 	#include <string>
+#include "OrderedArray.h"
+#include "Item.h"
+
 using namespace std;
 
 class Player
 {
 private:
 	string name;
-	int m_health;
-	int m_gold;
+	int health;
+	int gold;
 	int maxhealth;
-	int m_damage;
-	int m_defence;
-	int m_speed;
-	int m_level;
-	int m_exp;
+	int damage;
+	int defence;
+	int speed;
+	int level;
+	int exp;
 	int maxexp;
 	int points;
+	OrderedArray<string> inventory;
+
 	public:
 	Player()
 	{
 		name = "Default";
 		maxhealth = 100;
-		m_health = 100;
-		m_gold = 0;
-		m_damage = 0;
-		m_defence = 0;
-		m_speed = 0;
-		m_level = 1;
-		m_exp = 0;
+		health = 100;
+		gold = 0;
+		damage = 0;
+		defence = 0;
+		speed = 0;
+		level = 1;
+		exp = 0;
 		maxexp = 100;
 		points = 20;
 	}
@@ -40,20 +46,63 @@ private:
 	{
 		return name;
 	}
-
+	int getGold()
+	{
+		return gold;
+	}
 	void setName(string p_name)
 	{
 		name = p_name;
 	}
+	void setGold(int p_gold)
+	{
+		gold = p_gold;
+	}
+	void setHealth(int p_health)
+	{
+		health = p_health;
+	}
+		void setMaxHealth(int p_maxhealth)
+	{
+		maxhealth = p_maxhealth;
+	}
+	void setDamage(int p_damage)
+	{
+		damage = p_damage;
+	}
+	void setDefence(int p_defence)
+	{
+		defence = p_defence;
+	}
+		void setSpeed(int p_speed)
+	{
+		speed = p_speed;
+	}
+		void setLevel(int p_level)
+	{
+		level = p_level;
+	}
 
+	void setExp(int p_exp)
+	{
+		exp = p_exp;
+	}
+	void setMaxExp(int p_maxexp)
+	{
+		maxexp = p_maxexp;
+	}
+	void setPoints(int p_point)
+	{
+		points = p_point;
+	}
 	void increaseGold(int p_gold)
 	{
-		m_gold += p_gold;
+		gold += p_gold;
 	}
 
 	void spendGold(int p_gold)
 	{
-		m_gold -= p_gold;
+		gold -= p_gold;
 	}
 
 	void createChar()
@@ -64,8 +113,8 @@ private:
 
 	void increaseExp(int exp)
 	{
-		m_exp = m_exp + exp;
-		if(m_exp >= maxexp)
+		exp = exp + exp;
+		if(exp >= maxexp)
 		{
 			levelUp();
 		}
@@ -73,8 +122,8 @@ private:
 
 	void levelUp()
 	{
-		m_level++;
-		m_exp = 0;
+		level++;
+		exp = 0;
 		maxexp = maxexp + 20;
 		points = points+5;
 		cout << "Concrats you have leveled up. You must go to the in to apply your skill points." <<endl;
@@ -88,31 +137,31 @@ private:
 		{
 			cout << "Points: " << points << endl;
 			cout << "------------------------" << endl;
-			cout << "1. Health: " << m_health << endl;
-			cout << "2. Damage: " << m_damage << endl;
-			cout << "3. Defence: " << m_defence << endl;
-			cout << "4. Speed: " << m_speed << endl;
+			cout << "1. Health: " << health << endl;
+			cout << "2. Damage: " << damage << endl;
+			cout << "3. Defence: " << defence << endl;
+			cout << "4. Speed: " << speed << endl;
 		
 			cin >> upgrade;
 			if(upgrade == 1)
 			{
-				m_health = m_health + 20;
+				health = health + 20;
 				maxhealth = maxhealth + 20;
 				points--;
 			}
 			else if(upgrade == 2)
 			{
-				m_damage = m_damage + 5;
+				damage = damage + 5;
 				points--;
 			}
 				else if(upgrade == 3)
 			{
-				m_defence = m_defence + 5;
+				defence = defence + 5;
 				points--;
 			}
 				else if(upgrade == 4)
 			{
-				m_speed = m_speed + 5;
+				speed = speed + 5;
 				points--;
 			}
 			else
@@ -124,26 +173,133 @@ private:
 	void viewStats()
 	{
 		cout << "Name: " << name << endl;
-		cout << "Gold: " << m_gold << endl;
-		cout << "Health: " << m_health << endl;
-		cout << "Damage: " << m_damage << endl;
-		cout << "Defence: " << m_defence << endl;
-		cout << "Speed: " << m_speed << endl;
-		cout << "Level: " << m_level << endl;
-		cout << "Experience: " << m_exp << endl;
+		cout << "Gold: " << gold << endl;
+		cout << "Health: " << health << endl;
+		cout << "Damage: " << damage << endl;
+		cout << "Defence: " << defence << endl;
+		cout << "Speed: " << speed << endl;
+		cout << "Level: " << level << endl;
+		cout << "Experience: " << exp << endl;
 		cout << "Points to Spend: " << points << endl;
 	}
 
 	void rest()
 	{
-		m_health = maxhealth;
+		health = maxhealth;
 	}
 
 	void takeDamage(int damage)
 	{
-		m_health -= damage;
+		health -= damage;
 	}
 
+	void addItem(string id)
+	{
+		inventory.push(id);
+	}
+
+	void printInventory()
+	{
+		Item item = Item();
+		for(int i = 1; i < inventory.getSize();i++)
+		{
+			item.getItem(inventory[i]);
+			item.printItem();
+		}
+	}
+
+	void savePlayer(){
+	string filename = getName() + ".txt";
+	cout << filename<<endl;
+	ofstream ofile(filename);
+	ofile << "Name: " <<name<<endl;
+	ofile << "Gold: " <<gold<<endl;
+	ofile <<"Health: "<<health<<endl;
+	ofile <<"MaxHealth: "<<maxhealth<<endl;
+	ofile<<"Damage: "<<damage<<endl;
+	ofile<<"Defence: "<< defence<<endl;
+	ofile<<"Speed: "<< speed<<endl;
+	ofile<<"Level: "<< level<<endl;
+	ofile<<"Experience: "<< exp<<endl;
+	ofile<<"MaxExperience: "<< maxexp<<endl;
+	ofile<<"Points: "<< points<<endl;
+	ofile<<"Inventory: ";
+	for(int i  = 0; i <= inventory.getSize();i++)
+	{
+	ofile<<inventory[i] << ",";
+	}
+}
+
+
+void loadPlayer(string username){
+	string filename = username + ".txt";
+	cout << filename<<endl;
+	ifstream infile(filename);
+	string line;
+	string garbage;
+	if (infile)  // same as if(infile.good())
+    {
+    while (getline( infile, line ))  // same as while (getline( infile, line ).good())
+      {
+		//Name
+		infile >> garbage;
+		getline( infile, line );
+		this->setName(line);
+		//Gold
+		infile >> garbage;
+		getline( infile, line );
+		this->setGold(atoi(line.c_str()));
+		//Health
+		infile >> garbage;
+		getline( infile, line );
+		this->setHealth(atoi(line.c_str()));
+
+			//Health
+		infile >> garbage;
+		getline( infile, line );
+		this->setMaxHealth(atoi(line.c_str()));
+		//Damage
+		infile >> garbage;
+		getline( infile, line );
+		this->setDamage(atoi(line.c_str()));
+		//Defence
+		infile >> garbage;
+		getline( infile, line );
+		this->setDefence(atoi(line.c_str()));
+		//Speed
+		infile >> garbage;
+		getline( infile, line );
+		this->setSpeed(atoi(line.c_str()));
+				//Level
+		infile >> garbage;
+		getline( infile, line );
+		this->setLevel(atoi(line.c_str()));
+			//Exp
+		infile >> garbage;
+		getline( infile, line );
+		this->setExp(atoi(line.c_str()));
+
+			//Exp
+		infile >> garbage;
+		getline( infile, line );
+		this->setMaxExp(atoi(line.c_str()));
+
+			//Exp
+		infile >> garbage;
+		getline( infile, line );
+		this->setPoints(atoi(line.c_str()));
+		//Inventory
+		getline( infile, line, ':' );
+		string result;
+		 while(getline(infile, result, ','))
+                {
+					this->addItem(result);
+                }
+	
+
+		
+}
+	}
 };
 
 #endif
